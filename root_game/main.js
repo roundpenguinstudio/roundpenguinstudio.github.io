@@ -11,17 +11,18 @@ const k = kaboom({
 function reportWindowSize() {
   if(window.innerHeight > window.innerWidth){
       document.getElementById('game').style.width = window.innerWidth;
-      document.getElementById('game').style.height = window.innerWidth;
-}else{
-    document.getElementById('game').style.width = window.innerHeight;
       document.getElementById('game').style.height = window.innerHeight;
+}else{
+    document.getElementById('game').style.width = window.innerHeight*0.7;
+    document.getElementById('game').style.height = window.innerHeight;
   }
 }
 reportWindowSize();
 
-var soil_num = 16;
+var soil_num = 2;
 var root_width = 20;
-var soil_width = 0;
+var soil_width = 800;
+var soil_height = 1000;
 var speedY = 100;
 var total_root_num = 0;
 var started = false;
@@ -44,14 +45,19 @@ if(typeof(best_scores)!=typeof([])){
     localStorage.setItem("best_scores",[]);
 }
 
-
 window.onresize = reportWindowSize;
+
 k.loadRoot("/soilparts/");
-for(var i=0;i<soil_num;i++){
-    k.loadSprite("soil"+i.toString(), i.toString()+".png");
-}
+//for(var i=0;i<soil_num;i++){
+//    k.loadSprite("soil"+i.toString(), i.toString()+".png");
+//}
+
+k.loadSprite("soil0", "soil1.png");
+k.loadSprite("soil1", "soil2.png");
+
 k.loadSprite("start","start.png");
 k.loadSprite("leaf","leaftop.png");
+
 for(var i=0;i<root_type_num;i++){
     k.loadSprite("root"+i.toString(),"root"+i.toString()+".png");
 }
@@ -60,7 +66,10 @@ k.loadSprite("knob","grass.png");
 k.loadSprite("root_head","roothead.PNG");
 k.loadSprite("rock1","rock1.png");
 k.loadSprite("rock2","rock2.png");
-k.loadSprite("mush1","mush1.png");
+k.loadSprite("water","water.png");
+k.loadSprite("fossil","fossil.png");
+k.loadSprite("platypus","platypus.png");
+
 k.loadSprite("nav","nav.png");
 k.loadSprite("beetle","beetle.png");
 var moved_amount = 0;
@@ -134,7 +143,7 @@ k.layers([
 function restart(){
     score = 0;
     roots = {};
-    speedY = 50;
+    speedY = 500;
     started = true;
     k.every("nav",(nav)=>{
         k.destroy(nav);
@@ -148,6 +157,9 @@ function restart(){
     ]);    
     k.every("root",(root)=>{
         k.destroy(root);
+    });
+    k.every("knob",(knob)=>{
+        k.destroy(knob);
     });
     k.every("obstruction",(obstruction)=>{
         k.destroy(obstruction);
@@ -229,11 +241,11 @@ function closeNavMenu(){
 
 
 function addRandomSoil(x,y){
-k.add([
+k.add([    
 		k.sprite("soil"+Math.floor(Math.random()*soil_num).toString()),
         k.pos(x,y),
         k.scale(k.width()/100),
-        //k.scale(global_scale),
+        k.scale([global_scaleX,global_scaleY]),
 		k.layer("bg"),
         "soil",
             {
@@ -242,15 +254,11 @@ k.add([
 }
 
 /////////////////////////////////////////////
-
-/*
-
-for(var i=0;i<=(k.width()/soil_width)+1;i++){
+for(var i=0;i<=(k.width()/soil_width);i++){
 for(var j=1;j<=((k.height())/soil_width)+2;j++){
-    addRandomSoil(i*soil_width,j*soil_width+k.height()*0.4-soil_width);
+    addRandomSoil(i*soil_width,j*soil_height+k.height()*0.4-soil_height);
 }
 }
-*/
 
 function addNewRoot(root_id_param,initial_root,target_root){
     total_root_num +=1;
@@ -271,6 +279,7 @@ function addNewRoot(root_id_param,initial_root,target_root){
             prevX:initial_root,
             last_gen:0,
             last_branch:0,
+            overlap_thresh:0,
             branch_direction:1,
         }
     ]);
@@ -298,32 +307,40 @@ var obstructions_types = [
     [["rock1",0,500,1],
     ["rock2",300,200,1],
     ["beetle",150,1000,0.5],
-    ["rock2",200,800,1],
+    ["fossil",200,800,1],
     ["rock2",600,600,1],
     ["rock2",250,500,1],
     ["rock1",500,1500,1]],
     ////////////////////
     [["beetle",800,500,0.5],
     ["rock2",100,300,1],
-    ["rock2",50,700,1],
+    ["platypus",50,700,1],
     ["rock2",0,500,1],
     ["rock2",250,700,1],
-    ["rock2",350,500,1],
+    ["fossil",350,1200,1],
     ["rock2",800,700,1],
     ["beetle",500,1500,0.8]],
     ////////////////////
-    [["rock1",0,1200,1],
-    ["rock2",k.height()*0.4,800,1],
-    ["rock1",800,1000,1],
+    [["rock1",50,1200,1],
+    ["platypus",400,1000,0.6],
+    ["rock1",800,500,1],
     ["rock2",600,600,1],
-    ["rock2",250,500,1],
+    ["fossil",100,500,1],
     ["rock2",450,300,1],
     ["rock1",500,1500,1]],
     ////////////////////
-    [["rock1",100,300,1],
-    ["rock2",500,200,1],
+    [["fossil",100,300,1],
+    ["beetle",600,200,1],
     ["rock2",850,700,0.7],
     ["beetle",200,800,1],
+    ["rock1",500,1500,1]],
+    ////////////////////
+    [["beetle",100,1200,1],
+    ["rock2",400,800,1],
+    ["platypus",0,500,1],
+    ["rock2",600,600,1],
+    ["rock2",650,500,1],
+    ["fossil",750,300,1],
     ["rock1",500,1500,1]],
 ];
 
@@ -341,13 +358,14 @@ function addRandomObstruction(){
             "obstruction",
             {
                 obs_type:"block",
-                genObject:false
+                genObject:false,                
+                tolerable_thresh:20/(speedY/k.debug.fps()),
             }
         ]);
     }
     if(Math.random()<0.6){
         k.add([
-            k.sprite("mush1"),
+            k.sprite("water"),
             k.pos(Math.random()*k.width(),k.height()+Math.random()+k.height()*0.6),
             k.origin("center"),
             k.layer("obj"),
@@ -440,7 +458,7 @@ if(root.root_scale>0.8 && root.root_num >branch_thresh*Math.pow(root.root_scale+
     k.pos(root.pos.x-root.generate_direction*Math.cos(root.generate_angle+Math.PI/2)*root_width*speedY/300,    
     root.pos.y+root.generate_direction*Math.sin(root.generate_angle+Math.PI/2)*root_width*speedY/300),
     k.origin("center"),
-    k.layer("obj"),
+    k.layer("bg"),
     k.scale(
         [Math.max(0.5,root.root_scale-0.1)*global_scaleX,
             Math.max(0.5,root.root_scale-0.1)*global_scaleY]),
@@ -488,7 +506,7 @@ if(root.root_scale>0.8 && root.root_num >branch_thresh*Math.pow(root.root_scale+
         k.pos(root.pos.x-root.generate_direction*Math.cos(root.generate_angle+Math.PI/2)*root_width*(Math.pow(root.root_scale,3))*speedY/500,        
         root.pos.y+root.generate_direction*Math.sin(root.generate_angle+Math.PI/2)*root_width*speedY/500),
         k.origin("center"),
-        k.layer("obj"),
+        k.layer("bg"),
         k.scale(
             [root.root_scale*global_scaleX,
                 root.root_scale*global_scaleY]),
@@ -540,7 +558,7 @@ k.every("soil",(soil)=>{
         soil.generated = true;
         addRandomSoil(soil.pos.x,k.height()-(0-soil.pos.y))        
     }
-    if(soil.pos.y <=-soil_width){
+    if(soil.pos.y <=-soil_height){
         k.destroy(soil);
     }
 });
@@ -654,8 +672,22 @@ k.every("root_head",(root)=>{
     /////////////////////////////////////////////
     });
     /////////////////////////////////////////////
-    k.collides("root_head", "obstruction", (r, o) => {
-        if(o.obs_type=="block"){
+    k.overlaps("root_head", "obstruction", (r, o) => {
+        if(o.obs_type=="splitter"){
+            k.destroy(o);
+            if(total_root_num<4){
+            if(r.pos.x+global_scaleX*k.width()*0.2>k.width()){
+                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x-k.width()*0.125*global_scaleX);                
+            }else{
+                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x+k.width()*0.125*global_scaleX);                
+            }
+            
+            }
+            
+        }else if(o.obs_type=="block"){
+            r.overlap_thresh +=1;
+            r.overlaped = true;
+        if(r.overlap_thresh >= o.tolerable_thresh){
     r.stopped = true;
     total_root_num -=1;
     k.every("knob",(knob)=>{
@@ -690,21 +722,14 @@ k.every("root_head",(root)=>{
             localStorage.setItem('best_scores',best_scores);
         }
         started = false;
-    }        
-        }else if(o.obs_type=="splitter"){
-            k.destroy(o);
-            if(total_root_num<4){
-            if(r.pos.x+global_scaleX*k.width()*0.2>k.width()){
-                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x-k.width()*0.125*global_scaleX);                
-            }else{
-                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x+k.width()*0.125*global_scaleX);                
-            }
-            
-            }
-            
-        }    
+    }
+    }}
 });
-
+k.every("root_head",(rh)=>{
+    if(rh.overlaped==false){
+        rh.overlap_thresh = 0;
+    }
+})
 /////////////////////////////////////////////
 });
 /////////////////////////////////////////////
@@ -746,7 +771,6 @@ k.scene("scores", () => {
         k.go("main");
         return;
     }
-    
     
     best_scores.sort();
     best_scores = best_scores.reverse();

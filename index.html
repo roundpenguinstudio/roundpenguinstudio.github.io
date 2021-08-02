@@ -18,13 +18,10 @@
   <!---<link rel="icon" href="/favicon.svg" type="image/svg+xml">-->
   <link rel="apple-touch-icon" href="images/penguin.png">
   
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Loop&display=swap" rel="stylesheet"> 
-   <!-- FONT
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
 
+<!--<link href="https://fonts.googleapis.com/css2?family=Zen+Loop&display=swap" rel="stylesheet">
+-->
+  
   <!-- CSS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="stylesheet" href="css/styles.css">
@@ -50,6 +47,11 @@
   <a onclick="toggleMenu()" href="#section-contact">Contact
   </a></p>
 </div>
+
+<div onclick="closeTrailer()" id="video-modal" class="video-modal">
+
+</div>
+
 <!--/////////////////////////////////////////////////////////////////-->
 <!--/////////////////////////////////////////////////////////////////-->
 <!--/////////////////////////////////////////////////////////////////-->
@@ -58,6 +60,7 @@
 <!--/////////////////////////////////////////////////////////////////-->
 <!--/////////////////////////////////////////////////////////////////-->
 <div class="large">
+
 <div  id="top-nav-container1" class="top-nav-container "style="background:'./images/diagonal-striped-brick.png;">
     <img src="images/penguin-logo.png" style="width:60px;height:60px;margin-top:-10px;margin-bottom:-15px;">
    <label class="logo-text">
@@ -137,21 +140,25 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </div>
 <!--/////////////////-->
 <div  class="sec-hero content" style="border-bottom:none;">
-
 <img src="images/Cover.png" style="width:23.5rem;margin-top:0px;margin-right:40px;">
-<p style="right:20px;">
-<label style="font-weight:800;font-size:30px;color:#9d7f5a;">Survival of the Fattest</label><br><br>
+
+<p style="right:20px;top:0px;">
+<label style="font-weight:800;font-size:30px;color:#9d7f5a;">Survival of the Fattest</label>
+<button onclick="playTrailer(this,'EENpT70cu24')">
+Play Trailer
+</button>
+<br><br>
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 </p>
 </div>
 <!--/////////////////-->
 
 <div id="section-game2" class="sec-hero sec-hero-right content">
-<p style="left:20px;">
+<p style="left:20px;top:45px;">
 <label style="font-weight:800;font-size:30px;color:#9d7f5a;">Root</label><br><br>
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 </p>
-<img src="images/Cover.png" style="width:23.5rem;margin-top:50px;margin-right:20px;margin-left:40px;">
+<img src="images/Cover.png" style="top:0px;margin-left:580px !important;width:23.5rem;margin-top:50px;margin-right:20px;margin-left:40px;">
 </div>
 
 <!--/////////////-->
@@ -159,8 +166,9 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 <img src="images/Cover.png" style="width:23.5rem;margin-top:50px;margin-right:20px;margin-left:40px;">
 <p style="left:20px;">
-<a href="./root_game/index.html">Play</a>
-<label style="font-weight:800;font-size:30px;color:#9d7f5a;">Root</label><br><br>
+<label style="font-weight:800;font-size:30px;color:#9d7f5a;">Root</label>
+<button><a href="./root_game/index.html">Play</a></button>
+<br><br>
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 </p>
 </div>
@@ -206,3 +214,16 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </body>
 </html>
 <script src="js/scripts.js"></script>
+<script>
+var video_modal = document.getElementById("video-modal");
+function playTrailer(element,trailer_link){
+  video_modal.innerHTML = "<div class='lds-circle'><div></div></div><iframe style='margin-top:100px;' width='560' height='315' src='https://www.youtube-nocookie.com/embed/"+trailer_link +"?showinfo=0&autohide=1&modestbranding=1' title='YouTube video player' frameborder='0' allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'></iframe>"
+  video_modal.style.display = "flex";
+};
+function closeTrailer(){
+  video_modal.style.display = "none";
+}
+video_modal.style.display = "none";
+
+</script>
+

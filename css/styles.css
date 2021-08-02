@@ -2,11 +2,28 @@
   margin-top:5px;
 }
 
-
+/* latin-ext */
+@font-face {
+  font-family: 'ZenLoop';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../font/h0GrssK16UsnJwHsEJ96oQ3n5g.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'ZenLoop';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../font/h0GrssK16UsnJwHsEJ90oQ0.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 @font-face {
-  font-family: 'MemoriesRound';
-  src:  url('font/MemoriesRound-XYgg.ttf')
+  font-family: 'RoundRound';
+  src:  url('../font/MemoriesRound-XYgg.ttf')
 }
 
 .color1{
@@ -42,7 +59,7 @@
     }
   }  
   /* larger than 550 */
-  @media (max-width: 850px) {
+  @media (max-width: 1000px) {
     .sec-hero p{
       position:relative !important;
       width:80% !important;
@@ -251,12 +268,22 @@
 }
 .sec-small h1{
   color:#857d73;
+  font-family: "RoundRound";
+  font-weight: 800;
 }
-.content{
+.video-modal{
+  position:fixed;
+  margin:auto;
+  display:flex;
+  width:100%;
+  height:100%;
+  max-width: 1000px;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000000;
+  align-content: center;
+  justify-content: center;
+}
 
- 
- 
-}
 
 .game-description{
   margin-top:30px;
@@ -270,6 +297,7 @@ html{
   background-color:rgb(240, 240, 240);
   background-blend-mode: color-burn;
   font-family: 'Zen Loop', cursive;
+  font-family: "RoundRound";
   font-weight: 800;
   color:rgba(0,0,0,0.7);
   display:flex;
@@ -286,6 +314,7 @@ body{
 .logo-text{  
   color: #9d7f5a;
   font-weight: bolder;
+  font-family: "ZenLoop";
   position: absolute;
   margin-left:5px;
 }
@@ -302,12 +331,14 @@ body{
 
 .menu-text{
   color:white;
+  font-family: "ZenLoop";
   font-weight: bolder;
   font-size: 20px;
 }
 
 .nav-text{  
   color: #9d7f5a;
+  font-family: "ZenLoop";
   font-weight: bolder;
   margin-left:50px;
 }
@@ -323,4 +354,41 @@ body{
 a, a:hover, a:focus, a:active {
   text-decoration: none;
   color: inherit;
+}
+p{
+  font-family: "RoundRound";
+  font-weight:100;
+  color:rgb(68, 68, 68);
+}
+
+.lds-circle {
+  display: inline-block;
+  margin-top:200px;
+  position: absolute;
+  z-index:-1;
+  transform: translateZ(1px);
+}
+.lds-circle > div {
+  display: inline-block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  background: #fff;
+  animation: lds-circle 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+@keyframes lds-circle {
+  0%, 100% {
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+  }
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(1800deg);
+    animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+  }
+  100% {
+    transform: rotateY(3600deg);
+  }
 }
