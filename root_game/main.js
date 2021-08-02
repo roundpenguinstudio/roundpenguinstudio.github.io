@@ -427,11 +427,11 @@ k.every("root",(root)=>{
         root.generated = true;   
          if(root.stem_root==false){
     /////////////////////////////////////////////
-if(root.root_scale>0.7 && root.root_num >branch_thresh*Math.pow(root.root_scale+0.05,3)){
+if(root.root_scale>0.8 && root.root_num >branch_thresh*Math.pow(root.root_scale+0.05,3)){
     //root.generate_direction = -root.generate_direction;
     root.root_num =0;
     let hackyfix = 0;
-    root.branch_direction = -root.generate_direction;
+    root.branch_direction = root.branch_direction;
     
     
 
