@@ -32,11 +32,14 @@ var branch_thresh = 10;
 var branch_life = 100;
 
 var best_scores = localStorage.getItem('best_scores');
-
+if(!best_scores){
+    best_scores = [];
+}
 if(typeof(best_scores)!=typeof([])){
     best_scores = [];
     localStorage.setItem("best_scores",[]);
 }
+
 
 window.onresize = reportWindowSize;
 k.loadRoot("/soilparts/");
