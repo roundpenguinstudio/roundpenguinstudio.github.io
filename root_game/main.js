@@ -30,6 +30,7 @@ var roots = {};
 var root_type_num = 7;
 var branch_thresh = 10;
 var branch_life = 100;
+var gen_thresh = 200/k.debug.fps();
 
 var best_scores = localStorage.getItem('best_scores');
 if(!best_scores){
@@ -572,7 +573,7 @@ k.every("root_head",(root)=>{
         if(Math.abs(root.angle - 0)>0.2)
             root.angle += (0 - root.angle)*k.dt();
     }
-    let gen_thresh = 300/k.debug.fps();
+    
     let step_size = root.pos.x - root.prevX;
     let pos_x = 0;
     let pos_y = 0;
