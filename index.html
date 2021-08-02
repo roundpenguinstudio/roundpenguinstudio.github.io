@@ -31,6 +31,25 @@
 </head>
 
 <body>
+<div id="menu-show" class="nav-menu-show">
+ <p class="menu-text">
+  <a onclick="toggleMenu()" href="#section-about">About
+  </a>
+  </p>
+ <p class="menu-text">
+  <a onclick="toggleMenu()" href="#section-game1">Survival of the Fattest
+  </a></p>
+<p class="menu-text">
+  <a onclick="toggleMenu()" href="#section-game2-small">Root
+  </a></p>
+  <p class="menu-text">
+  <a onclick="toggleMenu()" href="#section-gallery">Other Work
+  </a></p>
+
+  <p class="menu-text" >
+  <a onclick="toggleMenu()" href="#section-contact">Contact
+  </a></p>
+</div>
 <!--/////////////////////////////////////////////////////////////////-->
 <!--/////////////////////////////////////////////////////////////////-->
 <!--/////////////////////////////////////////////////////////////////-->
@@ -44,7 +63,29 @@
    <label class="logo-text">
   ROUND PENGUIN
   <br> &nbsp; &nbsp;&nbsp;&nbsp;STUDIO</label>
+
+
+  <label class="nav-text" style="margin-left:200px;">
+  <a href="#section-about">About
+  </a>
+  </label>
+ <label class="nav-text">
+  <a href="#section-game1">Survival of the Fattest
+  </a></label>
+<label class="nav-text">
+  <a href="#section-game2">Root
+  </a></label>
+  <label class="nav-text">
+  <a href="#section-gallery">Other Work
+  </a></label>
+
+  <label class="nav-text" >
+  <a href="#section-contact">Contact
+  </a></label>
+
 </div>
+
+
 </div>
 <!--/////////////////////////////////////////////////////////////////-->
 <!--/////////////////////////////////////////////////////////////////-->
@@ -64,7 +105,7 @@
   <br> &nbsp; &nbsp;&nbsp;&nbsp;STUDIO</label>
   <!--/////////////////////////////////////////////////////////////////-->
   <!--/////////////////////////////////////////////////////////////////-->
-  <div class="menu-container" onclick="myFunction(this)">
+  <div id="burger-menu" class="menu-container" onclick="toggleMenu()">
   <div class="bar1"></div>
   <div class="bar2"></div>
   <div class="bar3"></div>
@@ -83,7 +124,7 @@
 
 <!---->
 <!--/////////////////-->
-<div class="sec-small ">
+<div id="section-about" class="sec-small ">
 <h1>About</h1>
 <p>
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
@@ -91,11 +132,11 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </div>
 
 <!--/////////////////-->
-<div class="sec-small" style="height:50px;border-bottom:none;margin-top:50px;">
+<div id="section-game1" class="sec-small" style="height:50px;border-bottom:none;margin-top:50px;margin-bottom:50px;">
 <h1>Games</h1>
 </div>
 <!--/////////////////-->
-<div class="sec-hero content" style="border-bottom:none;">
+<div  class="sec-hero content" style="border-bottom:none;">
 
 <img src="images/Cover.png" style="width:23.5rem;margin-top:0px;margin-right:40px;">
 <p style="right:20px;">
@@ -105,7 +146,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </div>
 <!--/////////////////-->
 
-<div class="sec-hero sec-hero-right content">
+<div id="section-game2" class="sec-hero sec-hero-right content">
 <p style="left:20px;">
 <label style="font-weight:800;font-size:30px;color:#9d7f5a;">Root</label><br><br>
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
@@ -114,7 +155,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </div>
 
 <!--/////////////-->
-<div class="sec-hero sec-hero-right-small content" >
+<div id="section-game2-small" class="sec-hero sec-hero-right-small content" >
 
 <img src="images/Cover.png" style="width:23.5rem;margin-top:50px;margin-right:20px;margin-left:40px;">
 <p style="left:20px;">
@@ -125,7 +166,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </div>
 <!--////////////-->
 
-<div class="sec-small" style="height:50px;border-bottom:none;margin-top:50px;">
+<div id="section-gallery" class="sec-small" style="height:50px;border-bottom:none;margin-top:50px;">
 <h1>Work for Others</h1>
 </div>
 <div class="sec-hero " style="justify-content:center">
@@ -142,7 +183,6 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 </div>
 <!---->
-
 <!--/////////////////////////////////////////////////////////////////-->
 <!--/////////////////////////////////////////////////////////////////-->
 <!--/////////////////////////////////////////////////////////////////-->
@@ -155,7 +195,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </div>
 
 
-  <div class="footer">
+  <div id="section-contact" class="footer">
   <div style="margin:20px 20px 20px 20px;">
     Terms of Service | Privacy Policy | Contact : chenrongl@protonmail.com
   </div>
@@ -166,17 +206,3 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </body>
 </html>
 <script src="js/scripts.js"></script>
-<script>
-window.onscroll = function(){
-  console.log(window.scrollY);
-if(window.scrollY>10){
-document.getElementById("top-nav-container1").style = 
-"background:rgb(216, 218, 209,0.8);-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) ;-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) ;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) ;";
-document.getElementById("top-nav-container2").style = 
-"background:rgb(216, 218, 209,0.8);-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) ;-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) ;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) ;";
-}else{
-document.getElementById("top-nav-container1").style = "";
-document.getElementById("top-nav-container2").style = "";
-}
-};
-</script>
