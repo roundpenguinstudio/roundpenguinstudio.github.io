@@ -1,6 +1,6 @@
 const k = kaboom({
-    width: 800, // width of canvas
-    height:  1000, // height of canvas
+    width: 400, // width of canvas
+    height: 500, // height of canvas
     canvas: document.getElementById("game"), // use custom canvas
     scale: 2, // pixel size (for pixelated games you might want smaller size with scale)
     clearColor: [0, 0, 0, 1], // background color (default is a checker board background)
@@ -10,27 +10,28 @@ const k = kaboom({
 });
 function reportWindowSize() {
   if(window.innerHeight > window.innerWidth){
-      document.getElementById('game').style.width = window.innerWidth*0.9;
-      document.getElementById('game').style.height = window.innerWidth*0.9;
+      document.getElementById('game').style.width = window.innerWidth;
+      document.getElementById('game').style.height = window.innerWidth;
 }else{
-    document.getElementById('game').style.width = window.innerHeight*0.9;
-      document.getElementById('game').style.height = window.innerHeight*0.9;
+    document.getElementById('game').style.width = window.innerHeight;
+      document.getElementById('game').style.height = window.innerHeight;
   }
 }
 reportWindowSize();
 
 var soil_num = 16;
 var root_width = 20;
-var soil_width = 100;
+var soil_width = k.width();
 var speedY = 100;
 var total_root_num = 0;
 var started = false;
 var score = 0;
 var roots = {};
 var root_type_num = 7;
-var branch_thresh = 10;
-var branch_life = 100;
-var gen_thresh = 200/k.debug.fps();
+var branch_thresh = 30;
+var branch_life = 20;
+var global_scale = 0.5;
+var pixelScale = 2;
 
 var best_scores = localStorage.getItem('best_scores');
 if(!best_scores){
@@ -67,8 +68,8 @@ var moved_amount = 0;
 k.scene("main", () => {
 var curDraggin = null;
 k.mouseDown(()=>{
-    let mouseX = (k.mousePos().x*2/parseFloat(document.getElementById('game').style.width))*k.width();
-    let mouseY = (k.mousePos().y*2/parseFloat(document.getElementById('game').style.height))*k.height();    
+    let mouseX = (k.mousePos().x*pixelScale/parseFloat(document.getElementById('game').style.width))*k.width();
+    let mouseY = (k.mousePos().y*pixelScale/parseFloat(document.getElementById('game').style.height))*k.height();    
     k.every("knob",(knob)=>{
         if((Math.abs(knob.pos.x-mouseX)+Math.abs(knob.pos.y-mouseY))<100){
             curDraggin = knob;
@@ -139,6 +140,7 @@ function restart(){
     k.add([
             k.sprite("leaf"),
             k.pos(0,0),
+            k.scale(global_scale),
             k.layer("bg"),
             "leaf"
     ]);    
@@ -151,19 +153,21 @@ function restart(){
     k.every("root_head",(root_head)=>{
         k.destroy(root_head);
     });
-    addNewRoot("root1",370,370);
+    addNewRoot("root1",k.width()*0.5,k.height()*0.37);
     addRandomObstruction();
 }
 k.add([
             k.sprite("leaf"),
             k.pos(0,0),
+            k.scale(global_scale),
             k.layer("bg"),
             "leaf"
     ]);
  const start_button =  k.add([
             k.sprite("start"),
-            k.pos(400,500),
+            k.pos(k.height()*0.4,k.height()*0.5),
             k.layer("ui"),
+            k.scale(global_scale),
             k.origin("center"),
             "start_button"
     ]);
@@ -173,7 +177,7 @@ k.add([
     k.sprite("nav"),
     k.pos(0,0),
     k.layer("ui"),
-    k.scale(0.5),
+    k.scale(0.5*global_scale),
     "nav"
 ]);
 
@@ -182,8 +186,9 @@ k.add([
 function showNavMenu(){        
     k.go('scores');
     k.add([
-        k.rect(512, 512),
+        k.rect(k.height()*0.5, k.height()*0.5),
         k.color(k.rgba(0,0,0,0.8)),
+        k.scale(global_scale),
         "nav-item"
     ]);
     k.add([
@@ -205,7 +210,7 @@ function closeNavMenu(){
     })
     k.add([
         k.sprite("start"),
-        k.pos(400,500),
+        k.pos(k.height()*0.4,500),
         k.layer("ui"),
         k.origin("center"),
         "start_button"
@@ -224,6 +229,8 @@ function addRandomSoil(x,y){
 k.add([
 		k.sprite("soil"+Math.floor(Math.random()*soil_num).toString()),
         k.pos(x,y),
+        k.scale(k.width()/100),
+        //k.scale(global_scale),
 		k.layer("bg"),
         "soil",
             {
@@ -237,7 +244,7 @@ k.add([
 
 for(var i=0;i<=(k.width()/soil_width)+1;i++){
 for(var j=1;j<=((k.height())/soil_width)+2;j++){
-    addRandomSoil(i*soil_width,j*soil_width+400-soil_width);
+    addRandomSoil(i*soil_width,j*soil_width+k.height()*0.4-soil_width);
 }
 }
 
@@ -246,7 +253,8 @@ function addNewRoot(root_id_param,initial_root,target_root){
     roots[root_id_param] = target_root;
     k.add([
     k.sprite("root_head"),
-    k.pos(initial_root,400),
+    k.pos(initial_root,k.height()*0.4),
+    k.scale(global_scale),
     k.layer("obj"),
     k.rotate(0),
     k.origin("top"),
@@ -263,9 +271,9 @@ function addNewRoot(root_id_param,initial_root,target_root){
         }
     ]);
     k.add([
-		k.sprite("knob"),
+        k.sprite("knob"),
 		k.pos(roots[root_id_param],k.height()-50),
-		k.scale(1),
+		k.scale(global_scale),
         k.layer("ui"),
         k.solid(),
 		k.origin("center"),
@@ -301,7 +309,7 @@ var obstructions_types = [
     ["beetle",500,1500,0.8]],
     ////////////////////
     [["rock1",0,1200,1],
-    ["rock2",400,800,1],
+    ["rock2",k.height()*0.4,800,1],
     ["rock1",800,1000,1],
     ["rock2",600,600,1],
     ["rock2",250,500,1],
@@ -321,10 +329,10 @@ function addRandomObstruction(){
         let chosen = obstruction_chosen[i];
         k.add([
             k.sprite(chosen[0]),
-            k.pos(chosen[1],k.height()+300+chosen[2]),
+            k.pos(chosen[1]*global_scale,(k.height()+k.height()*0.3+chosen[2])*global_scale),
             k.origin("center"),
             k.layer("obj"),
-            k.scale(chosen[3]),
+            k.scale(chosen[3]*global_scale),
             k.solid(),
             "obstruction",
             {
@@ -336,9 +344,10 @@ function addRandomObstruction(){
     if(Math.random()<0.6){
         k.add([
             k.sprite("mush1"),
-            k.pos(Math.random()*k.width(),k.height()+Math.random()+600),
+            k.pos(Math.random()*k.width(),k.height()+Math.random()+k.height()*0.6),
             k.origin("center"),
             k.layer("obj"),
+            k.scale(global_scale),
             k.solid(),            
             "obstruction",
             {
@@ -350,8 +359,9 @@ function addRandomObstruction(){
     
     k.add([
         k.sprite("rock1"),
-        k.pos(-500,k.height()+500),
+        k.pos(-k.height()*0.5,k.height()+k.height()*0.5),
         k.origin("center"),
+        k.scale(global_scale),
         k.layer("obj"),
         k.solid(),
         "obstruction",
@@ -368,6 +378,7 @@ function addRandomObstruction(){
 k.render(() => {
     if(!started){
         return;
+
     }
     score += Math.ceil(Math.floor(speedY/50)/10 * (total_root_num+1));
     speedY +=0.1;
@@ -381,7 +392,7 @@ k.render(() => {
     curDraggin = null;
     }
     if(curDraggin){
-        let mouseX = (k.mousePos().x*2/parseFloat(document.getElementById('game').style.width))*k.width();
+        let mouseX = (k.mousePos().x*pixelScale/parseFloat(document.getElementById('game').style.width))*k.width();
         curDraggin.pos.x = mouseX;
         roots[curDraggin.root_id] = mouseX;
     }
@@ -392,7 +403,7 @@ k.every("leaf",(leaf)=>{
         return;
     }
     leaf.move(k.vec2(0,-speedY));
-    if(leaf.pos.y<=-400){
+    if(leaf.pos.y<=-k.height()*0.4){
         k.destroy(leaf);        
     }    
 });
@@ -410,11 +421,9 @@ k.every("root",(root)=>{
         if(root.gen_delay<=0){
         if(root.generated==false){
         root.generated = true;   
-
-
          if(root.stem_root==false){
     /////////////////////////////////////////////
-if(root.root_scale>0.5 && root.root_num >branch_thresh*Math.pow(root.root_scale+0.05,2)){
+if(root.root_scale>0.5 && root.root_num >branch_thresh*Math.pow(root.root_scale+0.05,3)){
     //root.generate_direction = -root.generate_direction;
     root.root_num =0;
     let hackyfix = 0;
@@ -428,11 +437,11 @@ if(root.root_scale>0.5 && root.root_num >branch_thresh*Math.pow(root.root_scale+
 
     k.add([
     k.sprite("root3"),
-    k.pos(root.pos.x-root.generate_direction*Math.cos(root.generate_angle+Math.PI/2)*root_width*0.5,    
-    root.pos.y+root.generate_direction*Math.sin(root.generate_angle+Math.PI/2)*root_width*0.5),
+    k.pos(root.pos.x-root.generate_direction*Math.cos(root.generate_angle+Math.PI/2)*root_width*speedY/300,    
+    root.pos.y+root.generate_direction*Math.sin(root.generate_angle+Math.PI/2)*root_width*speedY/300),
     k.origin("center"),
     k.layer("obj"),
-    k.scale(Math.max(0.5,root.root_scale-0.1)),
+    k.scale(Math.max(0.5,root.root_scale-0.1)*global_scale),
     k.rotate(root.generate_angle),
     "root",
     {
@@ -474,11 +483,11 @@ if(root.root_scale>0.5 && root.root_num >branch_thresh*Math.pow(root.root_scale+
         let root_type = "root"+Math.floor(Math.random()*(root_type_num));
         k.add([
         k.sprite("root3"),
-        k.pos(root.pos.x-root.generate_direction*Math.cos(root.generate_angle+Math.PI/2)*root_width*0.8*(Math.pow(root.root_scale,3)),        
-        root.pos.y+root.generate_direction*Math.sin(root.generate_angle+Math.PI/2)*root_width*0.5),
+        k.pos(root.pos.x-root.generate_direction*Math.cos(root.generate_angle+Math.PI/2)*root_width*(Math.pow(root.root_scale,3))*speedY/500,        
+        root.pos.y+root.generate_direction*Math.sin(root.generate_angle+Math.PI/2)*root_width*speedY/500),
         k.origin("center"),
         k.layer("obj"),
-        k.scale(root.root_scale),
+        k.scale(root.root_scale*global_scale),
         k.rotate(root.generate_angle),
         "root",
         {
@@ -536,7 +545,7 @@ k.every("obstruction",(rock)=>{
         return;
     }
     rock.move(k.vec2(0,-speedY));
-    if(rock.pos.y <=-500){
+    if(rock.pos.y <=-k.height()*0.5){
         if(rock.genObject==true){
             addRandomObstruction();
         }
@@ -552,20 +561,20 @@ k.every("root_head",(root)=>{
     }
     if(root.stopped){
         root.move(k.vec2(0,-speedY));
-        if(root.pos.y<-100){
+        if(root.pos.y<-k.height()*0.1){
             k.destroy(root);
         }
     }
     if(Math.abs(root.pos.x-roots[root.root_id])>root_width){
         //root.velocityX = (knob.pos.x-root.pos.x/root.last_move)*0.2;
         //root.angle += (Math.PI/2)*((speedY*k.debug.fps())/(root.pos.x-roots[root.root_id]));
-        let dx = (speedY * (Math.abs(root.pos.x-roots[root.root_id])/500))/k.debug.fps();
+        let dx = (speedY * (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)))/k.debug.fps();
         let dy = speedY/k.debug.fps();
         if(root.pos.x-roots[root.root_id]>0){
             dx = -dx;
-            root.move(k.vec2(-speedY * (Math.abs(root.pos.x-roots[root.root_id])/500),0));
+            root.move(k.vec2(-speedY * (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)),0));
         }else{
-            root.move(k.vec2(speedY* (Math.abs(root.pos.x-roots[root.root_id])/500),0));
+            root.move(k.vec2(speedY* (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)),0));
         }        
         root.angle = Math.tanh(dx/dy);
         
@@ -573,7 +582,7 @@ k.every("root_head",(root)=>{
         if(Math.abs(root.angle - 0)>0.2)
             root.angle += (0 - root.angle)*k.dt();
     }
-    
+    let gen_thresh = 200/k.debug.fps();
     let step_size = root.pos.x - root.prevX;
     let pos_x = 0;
     let pos_y = 0;
@@ -613,6 +622,7 @@ k.every("root_head",(root)=>{
         k.pos(root.pos.x-pos_x,root.pos.y-pos_y),
         k.origin("center"),
         k.layer("obj"),
+        k.scale(global_scale),
         k.rotate(root.angle),
         "root",
         {
@@ -651,8 +661,9 @@ k.every("root_head",(root)=>{
     if(total_root_num==0){
         const start_button =  k.add([
             k.sprite("start"),
-            k.pos(400,500),
+            k.pos(k.height()*0.4,k.height()*0.5),
             k.layer("ui"),
+            k.scale(global_scale),
             k.origin("center"),
             "start_button"
         ]);
@@ -660,7 +671,7 @@ k.every("root_head",(root)=>{
             k.sprite("nav"),
             k.pos(0,0),
             k.layer("ui"),
-            k.scale(0.5),
+            k.scale(0.5*global_scale),
             "nav"
         ]);
         if(score!=0){
@@ -673,9 +684,9 @@ k.every("root_head",(root)=>{
             k.destroy(o);
             if(total_root_num<4){
             if(r.pos.x+200>k.width()){
-                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x-100);                
+                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x-k.width()*0.125);                
             }else{
-                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x+100);                
+                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x+k.width()*0.125);                
             }
             
             }
@@ -690,8 +701,8 @@ k.every("root_head",(root)=>{
 
 k.scene("scores", () => {
     k.mouseDown(()=>{
-        let mouseX = (k.mousePos().x*2/parseFloat(document.getElementById('game').style.width))*k.width();
-        let mouseY = (k.mousePos().y*2/parseFloat(document.getElementById('game').style.height))*k.height();    
+        let mouseX = (k.mousePos().x*pixelScale/parseFloat(document.getElementById('game').style.width))*k.width();
+        let mouseY = (k.mousePos().y*pixelScale/parseFloat(document.getElementById('game').style.height))*k.height();    
         k.every('close-nav',(b)=>{
             if((Math.abs(b.pos.x-mouseX)<100)
             && (Math.abs(b.pos.y-mouseY)<50)){
@@ -704,11 +715,12 @@ k.scene("scores", () => {
         k.sprite("nav"),
         k.pos(k.width()-100,0),
         k.layer("ui"),
-        k.scale(0.5),
+        k.scale(0.5*global_scale),
         "close-nav"
     ]); 
     k.add([
         k.text("best_scores", 32),
+        k.scale(global_scale),
         k.pos(80, 80),
     ]);
     function closeNavMenu(){
@@ -723,6 +735,7 @@ k.scene("scores", () => {
         if(i<best_scores.length){
             k.add([
                 k.text(best_scores[i].toString(), 32),
+                k.scale(global_scale),
                 k.pos(80, 150+i*50),
             ]);        
         }
