@@ -110,7 +110,7 @@
     }
     .top-nav-container{
       width:980px !important;
-      margin-left:0px !important;
+      margin-left:0px !important;      
     }
   }
 
@@ -194,6 +194,7 @@
   width:100%;
   margin-left:0px;
   top:0px;
+  left:0px;
   z-index:100000000;
 }
  .menu-container {
