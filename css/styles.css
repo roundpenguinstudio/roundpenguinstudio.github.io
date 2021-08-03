@@ -25,7 +25,9 @@
   font-family: 'RoundRound';
   src:  url('../font/MemoriesRound-XYgg.ttf')
 }
-
+#section-game2,#section-game2-small{
+  display:none;
+}
 .color1{
   background:#A8F9FF;
 }
@@ -68,7 +70,7 @@
       display:none !important;
     }
     .sec-hero-right-small{
-      display:flex !important;
+      display:none !important;
       align-content: center !important;
       justify-content: center !important;
     }
@@ -102,9 +104,9 @@
       display:flex !important;
     }
     .sec-hero-right-small{
-      display:none !important;
-      
+      display:none !important;      
     }
+    
   .large{
       display:block;
     }
@@ -119,7 +121,7 @@
 
   /*background:  #fcfcfc;
     border: 1px solid #d1d1d1;*/
-    font: bold 15px Arial,Helvetica,Sans-serif;
+    font: bold 15px 'RoundRound';
     -webkit-border-radius: 20px;
     -moz-border-radius: 20px;
     border-radius: 8px;

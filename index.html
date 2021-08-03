@@ -17,7 +17,7 @@
   <link rel="icon" href="images/penguin.png">
   <!---<link rel="icon" href="/favicon.svg" type="image/svg+xml">-->
   <link rel="apple-touch-icon" href="images/penguin.png">
-  
+  <link rel="stylesheet" href="css/carousel.css">  
 
 <!--<link href="https://fonts.googleapis.com/css2?family=Zen+Loop&display=swap" rel="stylesheet">
 -->
@@ -36,9 +36,9 @@
  <p class="menu-text">
   <a onclick="toggleMenu()" href="#section-game1">Survival of the Fattest
   </a></p>
-<p class="menu-text">
+<!---<p class="menu-text">
   <a onclick="toggleMenu()" href="#section-game2-small">Root
-  </a></p>
+  </a></p>-->
   <p class="menu-text">
   <a onclick="toggleMenu()" href="#section-gallery">Other Work
   </a></p>
@@ -68,16 +68,16 @@
   <br> &nbsp; &nbsp;&nbsp;&nbsp;STUDIO</label>
 
 
-  <label class="nav-text" style="margin-left:200px;">
+  <label class="nav-text" style="margin-left:250px;">
   <a href="#section-about">About
   </a>
   </label>
  <label class="nav-text">
   <a href="#section-game1">Survival of the Fattest
   </a></label>
-<label class="nav-text">
+<!---<label class="nav-text">
   <a href="#section-game2">Root
-  </a></label>
+  </a></label>-->
   <label class="nav-text">
   <a href="#section-gallery">Other Work
   </a></label>
@@ -130,7 +130,7 @@
 <div id="section-about" class="sec-small ">
 <h1>About</h1>
 <p>
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+Round Penguin studio is small studio based in Auckland. We are interested in making fantasy, fairy tale type games and other media.
 </p>
 </div>
 
@@ -140,22 +140,28 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 </div>
 <!--/////////////////-->
 <div  class="sec-hero content" style="border-bottom:none;">
-<img src="images/Cover.png" style="width:23.5rem;margin-top:0px;margin-right:40px;">
+  <img src="images/blob-painting.png" style="width:23.5rem;margin-top:0px;margin-right:40px;">
 
 <p style="right:20px;top:0px;">
 <label style="font-weight:800;font-size:30px;color:#9d7f5a;">Survival of the Fattest</label>
-<button onclick="playTrailer(this,'EENpT70cu24')">
+&nbsp;&nbsp;&nbsp;
+<button class="smooth-borders" onclick="playTrailer(this,'EENpT70cu24')">
 Play Trailer
 </button>
 <br><br>
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+Survival of the Fattest is an online multiplayer game where the player begins as a juvenile blob, eating their way into
+evolving to three different fluffy creatures, each with their own characteristics and skill tree. The goal of the game
+is to eat as much as possible and be the last to survive.
 </p>
 </div>
 <!--/////////////////-->
 
-<div id="section-game2" class="sec-hero sec-hero-right content">
+<div id="section-game2" class="sec-hero sec-hero-right content" style="display:none !important;">
 <p style="left:20px;top:45px;">
-<label style="font-weight:800;font-size:30px;color:#9d7f5a;">Root</label><br><br>
+<label style="font-weight:800;font-size:30px;color:#9d7f5a;">Root</label>
+<button><a href="./root_game/index.html">Play</a></button>
+<br><br>
+
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 </p>
 <img src="images/Cover.png" style="top:0px;margin-left:580px !important;width:23.5rem;margin-top:50px;margin-right:20px;margin-left:40px;">
@@ -163,7 +169,6 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 <!--/////////////-->
 <div id="section-game2-small" class="sec-hero sec-hero-right-small content" >
-
 <img src="images/Cover.png" style="width:23.5rem;margin-top:50px;margin-right:20px;margin-left:40px;">
 <p style="left:20px;">
 <label style="font-weight:800;font-size:30px;color:#9d7f5a;">Root</label>
@@ -175,17 +180,38 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 <!--////////////-->
 
 <div id="section-gallery" class="sec-small" style="height:50px;border-bottom:none;margin-top:50px;">
-<h1>Work for Others</h1>
+<h1>Other Work</h1>
 </div>
 <div class="sec-hero " style="justify-content:center">
-<!---->
+<!---
 <div style="display:flex;flex-wrap:wrap;justify-content:center;margin-left:-40px;">
-<img src="images/Cover.png" id="sec-show1" style="width:23.5rem;margin-top:50px;">
-<img src="images/Cover.png" style="width:23.5rem;margin-top:50px;">
+<img src="images/Cover2.png" id="sec-show1" style="width:23.5rem;margin-top:50px;">
+<img src="images/blob-painting.png" style="width:23.5rem;margin-top:50px;">
+</div>-->
+<div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;margin-left:-40px;">
+
+<div  style="width:20.5rem;margin-right:15px;">
+<h2>Princess and the Peas</h2>
+<p style="margin-top:-5px">A Physics based game in collaboration with John White
+where the player take out all the peas without disturbing the princess's sleep.
+<br>
+</p>
+<br>
+<br>
+<br>
+<img src="images/princess.png" id="sec-show2"  style="width:20.5rem;">
+</h1>
 </div>
-<div style="display:flex;flex-wrap:wrap;justify-content:center;margin-left:-40px;">
-<img src="images/Cover.png" id="sec-show2" style="width:23.5rem;margin-top:50px;">
-<img src="images/Cover.png" style="width:23.5rem;margin-top:50px;">
+
+<div  style="width:20.5rem;margin-top:10px;">
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<img src="images/princess-game.png" style="width:20.5rem;">
+</div>
+
 </div>
 <div>
 
@@ -226,4 +252,3 @@ function closeTrailer(){
 video_modal.style.display = "none";
 
 </script>
-
