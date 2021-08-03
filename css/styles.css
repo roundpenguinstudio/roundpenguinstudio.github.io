@@ -25,9 +25,7 @@
   font-family: 'RoundRound';
   src:  url('../font/MemoriesRound-XYgg.ttf')
 }
-#section-game2,#section-game2-small{
-  display:none;
-}
+
 .color1{
   background:#A8F9FF;
 }
@@ -352,6 +350,10 @@ body{
   background:#c1b4a3;
   height:200px;
   padding-top:20px;
+  color:rgb(78,78,78);
+}
+.footer hr{
+  background-color:rgb(50,50,50);
 }
 a, a:hover, a:focus, a:active {
   text-decoration: none;
