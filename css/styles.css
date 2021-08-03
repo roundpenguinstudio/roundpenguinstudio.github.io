@@ -110,7 +110,8 @@
     }
     .top-nav-container{
       width:980px !important;
-      margin-left:0px !important;      
+      margin-left:0px !important;
+      left:inherit !important;
     }
   }
 
@@ -342,6 +343,7 @@ body{
   font-family: "ZenLoop";
   font-weight: bolder;
   margin-left:50px;
+  font-size:25px;
 }
 .nav-text:hover{  
   color: white;
