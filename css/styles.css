@@ -57,13 +57,22 @@
     .large{
       display:none;
     }
+    
   }  
   /* larger than 550 */
   @media (max-width: 1000px) {
     .sec-hero p{
       position:relative !important;
-      width:80% !important;
+      width:60% !important;
     }
+    .sec-small p{
+      width:60% !important;
+    }
+    .infotext{      
+      width:60%;
+      margin-left:22%;
+    }
+    
     .sec-hero-right{
       display:none !important;
     }
@@ -254,8 +263,7 @@
 }
 .sec-hero p{
   width: 50%;
-  position: absolute;
-  height:max-width:300px;
+  
 }
 .sec-small{
   height:500px;
@@ -310,8 +318,7 @@ html{
 }
 body{
   background:rgb(216, 218, 209);
-  width:1000px;
-  
+  max-width:1000px;  
 }
 .logo-text{  
   color: #9d7f5a;
@@ -355,9 +362,7 @@ body{
   padding-top:20px;
   color:rgb(78,78,78);
 }
-.footer hr{
-  background-color:rgb(50,50,50);
-}
+
 a, a:hover, a:focus, a:active {
   text-decoration: none;
   color: inherit;
@@ -398,4 +403,7 @@ p{
   100% {
     transform: rotateY(3600deg);
   }
+}
+.infotext{
+  font-weight: 100;
 }
