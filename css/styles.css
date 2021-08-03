@@ -101,6 +101,13 @@
     .sec-hero-right-small p{
       margin-left:-80px !important;
       }
+      body{
+        width:100% !important;
+      }
+      .footer{
+        width:100% !important;
+      }
+      
   }  
   /* Bigger than 1000 */
   @media (min-width: 1000px) {
@@ -322,6 +329,10 @@ html{
 body{
   background:rgb(216, 218, 209);
   max-width:1000px;  
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  
 }
 .logo-text{  
   color: #9d7f5a;
@@ -361,9 +372,17 @@ body{
 
 .footer{
   background:#c1b4a3;
-  height:200px;
+  height:200px;  
+  width:1000px;  
   padding-top:20px;
   color:rgb(78,78,78);
+}
+.footer-content{
+  display:flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width:90%;
+  margin:auto;
 }
 
 a, a:hover, a:focus, a:active {
