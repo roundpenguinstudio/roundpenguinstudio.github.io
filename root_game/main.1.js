@@ -5,11 +5,9 @@ const k = kaboom({
     scale: 2, // pixel size (for pixelated games you might want smaller size with scale)
     clearColor: [0, 0, 0, 1], // background color (default is a checker board background)
     fullscreen: false, // if fullscreen
-    crisp:true, // if pixel crisp (for sharp pixelated games)
+    crisp: false, // if pixel crisp (for sharp pixelated games)
     debug: true, // debug mode
-    
 });
-
 function reportWindowSize() {
   if(window.innerHeight > window.innerWidth){
       document.getElementById('game').style.width = window.innerWidth;
@@ -30,8 +28,6 @@ var total_root_num = 0;
 var started = false;
 var score = 0;
 var roots = {};
-var root_obj = {};
-var root_list = {};
 var root_type_num = 1;
 var branch_thresh = 30;
 var branch_life = 20;
@@ -66,7 +62,7 @@ k.loadSprite("leaf","leaftop.png");
 //    k.loadSprite("root"+i.toString(),"root"+i.toString()+".png");
 //}
 
-k.loadSprite("root0","rootroot.png");
+k.loadSprite("root0","root3.png");
 
 k.loadSprite("knob","grass.png");
 k.loadSprite("root_head","roothead.PNG");
@@ -149,8 +145,7 @@ k.layers([
 function restart(){
     score = 0;
     roots = {};
-    root_list = {};
-    speedY = 200;
+    speedY = 50;
     started = true;
     k.every("nav",(nav)=>{
         k.destroy(nav);
@@ -271,8 +266,7 @@ for(var j=1;j<=((k.height())/soil_width)+2;j++){
 function addNewRoot(root_id_param,initial_root,target_root){
     total_root_num +=1;
     roots[root_id_param] = target_root;
-    root_list[root_id_param] = [];
-    root_obj[root_id_param] = k.add([
+    k.add([
     k.sprite("root_head"),
     k.pos(initial_root,k.height()*0.4*global_scaleY),
     k.scale([global_scaleX,global_scaleY]),
@@ -407,8 +401,6 @@ function addRandomObstruction(){
     ]);    
 };
 
-
-
 k.action("root_head",(root)=>{
     if(!started){
         return;
@@ -419,65 +411,88 @@ k.action("root_head",(root)=>{
             k.destroy(root);
         }
     }
-    let dx = (speedY * (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*global_scaleX*1.2)))/k.debug.fps();
-    let dy = speedY/k.debug.fps();
-    let cur_root = k.vec2(root.pos);
-    let last_root = root_list[root.root_id][root_list[root.root_id].length-1];
-
-    if(Math.abs(root.pos.x-roots[root.root_id])>3){
+    if(Math.abs(root.pos.x-roots[root.root_id])>root_width){
+        //root.velocityX = (knob.pos.x-root.pos.x/root.last_move)*0.2;
+        //root.angle += (Math.PI/2)*((speedY*k.debug.fps())/(root.pos.x-roots[root.root_id]));
+        let dx = (speedY * (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)))/k.debug.fps();
+        let dy = speedY/k.debug.fps();
         if(root.pos.x-roots[root.root_id]>0){
             dx = -dx;
-        }
-        for(var d=0;d<Math.ceil(Math.abs(dx));d++){
-            root.pos.x += dx/Math.abs(dx);
-            root_list[root.root_id].push(k.vec2(root.pos.x,root.pos.y+(d/Math.ceil(Math.abs(dx)))*speedY/(k.debug.fps()))); 
-        }
+            root.move(k.vec2(-speedY * (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)),0));
+        }else{
+            root.move(k.vec2(speedY* (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)),0));
+        }        
         root.angle = Math.tanh(dx/dy);
         
     }else{
         if(Math.abs(root.angle - 0)>0.2)
-            root.angle += (0 - root.angle)*k.dt();        
-        for(var d=0;d<Math.ceil(Math.abs(dy));d++){
-            root_list[root.root_id].push(k.vec2(root.pos.x,root.pos.y+d)); 
-        }
-    }    
-    
-    /*
-    let q_t_x;
-    let q_t_y;
-    if(root_list.length>1){
-        let lx,ly,t,m_x,m_y;
-        for(var i_y=0;i_y<Math.ceil(cur_root.y-last_root.y);i_y++){
-            if( Math.abs(Math.ceil(cur_root.x-last_root.x)) >0){ 
-                t = i_y/Math.ceil(cur_root.y-last_root.y);
-                m_x = last_root.x + (cur_root.x - last_root.x)/2;
-                m_y = last_root.y + (cur_root.y - last_root.y)/2;
-
-                q_t_x = Math.pow(1-t,2)*cur_root.x + 2*(1-t)*t*m_x + Math.pow(t,2)*last_root.x;
-                q_t_y = Math.pow(1-t,2)*cur_root.y + 2*(1-t)*t*m_y + Math.pow(t,2)*last_root.y;
-                root_list.push(k.vec2(q_t_x,q_t_y));
-            }else{
-                root_list.push(k.vec2(cur_root.x,cur_root.y-i_y)); 
-            }            
-        }
-    }*/
-    
-    if(last_root){
-        let m_x;
-        let m_y;
-        if(
-            Math.abs(cur_root.y-last_root.y) >2
-        ){
-            for(var i_t=0;i_t<=1;i_t+=0.1){
-                m_x = (i_t)*cur_root.x + (1-i_t)*last_root.x;
-                m_y = (i_t)*cur_root.y + (1-i_t)*last_root.y;
-                root_list[root.root_id].push(k.vec2(m_x,m_y));
-            }
-        }
-    
+            root.angle += (0 - root.angle)*k.dt();
     }
-    
-    root.prevX = root.pos.x; 
+    //let gen_thresh = (15*k.debug.fps()/speedY);
+    let gen_thresh =10;
+    let step_size = root.pos.x - root.prevX;
+    let pos_x = 0;
+    let pos_y = 0;
+    if(speedY/k.debug.fps()<gen_thresh){
+        root.last_gen += speedY/k.debug.fps();
+        if(root.last_gen>gen_thresh){
+            //continue
+            root.last_gen = 0;
+        }else{
+            root.prevX = root.pos.x;
+            return;
+        }
+    }
+    let gen_num = Math.max(1,Math.floor(
+    Math.sqrt((Math.pow(speedY/k.debug.fps(),2)+Math.pow(step_size,2))) / gen_thresh));
+    let root_type;
+    let branch = false;    
+    for(var i=0;i<gen_num;i++){        
+        if(i<gen_num){
+            pos_y = i*gen_thresh;
+            
+            pos_x = (i/gen_num)*step_size;
+        }else{
+            pos_y = gen_num*gen_thresh;
+            pos_x =  step_size;
+        }
+        root.last_branch +=1;
+        if(root.last_branch>branch_thresh){
+            root.last_branch = 0;
+            branch = true;
+            root.branch_direction = -root.branch_direction;
+        }
+        root_type = "root"+Math.floor(Math.random()*(root_type_num));
+
+        k.add([
+        k.sprite(root_type),
+        k.pos(root.pos.x-pos_x,root.pos.y-pos_y),
+        k.origin("center"),
+        k.layer("obj"),
+        k.scale(
+            [global_scaleX,global_scaleY]),
+        k.rotate(root.angle),
+        "root",
+        {
+        generated: false,
+        root_id:"root1",
+        root_head:false,
+        root_type:root_type,
+        root_generator: branch,
+        stem_root:true,
+        angle_mode:"down",
+        generate_angle: root.angle+Math.PI/2,
+        generate_direction : root.branch_direction,
+        start_angle:root.angle +Math.PI/2,
+        gen_delay: 100/speedY,
+        branch_direction:-root.branch_direction,
+        root_scale:0.8,
+        root_time:Math.random()*branch_life,
+        root_num:0
+        }
+    ]);    
+    }
+    root.prevX = root.pos.x;    
 });
 
 k.action("obstruction",(o)=>{    
@@ -552,7 +567,7 @@ k.action("obstruction",(o)=>{
         }
         started = false;
     }
-    }}    
+    }}
     });
 });
 
@@ -573,7 +588,109 @@ k.action("root",(root)=>{
     if(root.root_head==false){
         root.move(k.vec2(0,-speedY));
     }
+    /////////////////////////////////////////////
+    //If is root generator
+    if(root.root_generator==true){        
+        if(root.gen_delay<=0){
+        if(root.generated==false){
+        root.generated = true;   
+         if(root.stem_root==false){
+    /////////////////////////////////////////////
+if(root.root_scale>0.8 && root.root_num >branch_thresh*Math.pow(root.root_scale+0.05,3)){
+    //root.generate_direction = -root.generate_direction;
+    root.root_num =0;
+    let hackyfix = 0;
+    root.branch_direction = root.branch_direction;
     
+    
+
+    k.add([
+    k.sprite("root0"),
+    k.pos(root.pos.x-root.generate_direction*Math.cos(root.generate_angle+Math.PI/2)*root_width*speedY/300,    
+    root.pos.y+root.generate_direction*Math.sin(root.generate_angle+Math.PI/2)*root_width*speedY/300),
+    k.origin("center"),
+    k.layer("bg"),
+    k.scale(
+        [Math.max(0.5,root.root_scale-0.1)*global_scaleX,
+            Math.max(0.5,root.root_scale-0.1)*global_scaleY]),
+    k.rotate(root.generate_angle),
+    "root",
+    {
+    generated: false,
+    root_id:"root1",
+    root_head:false,
+    root_type:"root0",        
+    root_generator: true,
+    stem_root:false,
+    generate_angle: root.generate_angle+Math.PI/2+hackyfix,
+    start_angle:root.generate_angle+Math.PI/2+hackyfix,
+    generate_direction: root.branch_direction,
+    branch_direction:-root.branch_direction,
+    gen_delay: (200/speedY),
+    angle_mode:"down",
+    root_scale: Math.max(0.3,root.root_scale-0.2),
+    root_time:Math.random()*branch_life,
+    root_num:0
+    }]);    
+
+    
+    //0.67....
+    //3.14
+    //2.4
+}
+        /////////////////////////////////////////////
+        }
+
+        if(root.root_time!=0){
+        if(root.generate_direction>0){
+            //right
+            root.generate_angle = Math.max(root.start_angle-Math.PI/2,root.generate_angle-0.05/root.root_scale);
+        }else{
+            //left
+            root.generate_angle = Math.min(root.start_angle+Math.PI/2,root.generate_angle+0.05/root.root_scale);
+        }
+        
+
+        let root_type = "root"+Math.floor(Math.random()*(root_type_num));
+        k.add([
+        k.sprite("root0"),
+        k.pos(root.pos.x-root.generate_direction*Math.cos(root.generate_angle+Math.PI/2)*root_width*(Math.pow(root.root_scale,3))*speedY/500,        
+        root.pos.y+root.generate_direction*Math.sin(root.generate_angle+Math.PI/2)*root_width*speedY/500),
+        k.origin("center"),
+        k.layer("bg"),
+        k.scale(
+            [root.root_scale*global_scaleX,
+                root.root_scale*global_scaleY]),
+        k.rotate(root.generate_angle),
+        "root",
+        {
+        generated: false,
+        root_id:"root1",
+        root_head:false,
+        root_type:root_type,
+        root_generator: true,
+        stem_root:false,
+        generate_angle:root.generate_angle,
+        start_angle:root.start_angle,
+        generate_direction:root.generate_direction,
+        gen_delay: (200/speedY),
+        angle_mode:"down",
+        root_time:root.root_time -1,
+        root_scale:root.root_scale,
+        branch_direction:root.branch_direction,
+        root_num:root.root_num+1
+        }]);
+        }
+        /////////////////////////////////////////////
+       
+        /////////////////////////////////////////////
+        }
+/////////////////////////////////////////////
+        }else{
+            root.gen_delay -=1;
+        }
+    
+    }
     /////////////////////////////////////////////
     if(root.pos.y<=-root_width || root.pos.y>=k.height()+root_width){
         k.destroy(root);
@@ -582,7 +699,6 @@ k.action("root",(root)=>{
         k.destroy(root);
     }
 });
-
 
 k.action("soil",(soil)=>{
     if(started==false){
@@ -598,54 +714,10 @@ k.action("soil",(soil)=>{
     }
 });
 
-function combination(n,r){
-    if(n==r){
-        return 1;
-    }else if(n==1){
-        return 1;
-    }else if(r==1){
-        return n;
-    }else if(n==0){
-        return 1;
-    }else if(r==0){
-        return 1;
-    }else{
-        let prod = n;
-        let prod_div = r;
-        for(var i=1;i<r;i++){
-            prod *= n-i;
-            prod_div *= r-i;
-        }
-        return prod/prod_div;
-    }
-}
-
-k.render(() => {    
-    for(var r_id in root_list){
-        for(var i=0;i<root_list[r_id].length;i++){
-            k.drawSprite("root0", {
-                    pos: k.vec2(root_list[r_id][i].x-2,root_list[r_id][i].y),
-                    scale: [global_scaleX*0.3,global_scaleY*0.3],
-                    center:"origin"
-                });
-            /*
-            k.drawRect(
-                k.vec2(root_list[i].x,root_list[i].y),
-               1,1
-            );*/
-            if(started==true){
-                root_list[r_id][i].y -= speedY/(k.debug.fps());            
-            }
-            if(root_list[r_id][i].y < -root_width){
-                root_list[r_id].splice(i,1);
-            }            
-    }
-    }
-    
-    
-
+k.render(() => {
     if(!started){
         return;
+
     }
     k.drawText("·", {
         size: 64,
@@ -669,8 +741,6 @@ k.render(() => {
         roots[curDraggin.root_id] = mouseX;
     }
     
-   
-
 /////////////////////////////////////////////
 
 
@@ -685,9 +755,7 @@ k.every("root_head",(rh)=>{
     if(rh.overlaped==false){
         rh.overlap_thresh = 0;
     }
-});
-
-
+})
 /////////////////////////////////////////////
 });
 /////////////////////////////////////////////

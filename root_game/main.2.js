@@ -31,7 +31,6 @@ var started = false;
 var score = 0;
 var roots = {};
 var root_obj = {};
-var root_list = {};
 var root_type_num = 1;
 var branch_thresh = 30;
 var branch_life = 20;
@@ -149,8 +148,7 @@ k.layers([
 function restart(){
     score = 0;
     roots = {};
-    root_list = {};
-    speedY = 200;
+    speedY = 500;
     started = true;
     k.every("nav",(nav)=>{
         k.destroy(nav);
@@ -271,7 +269,6 @@ for(var j=1;j<=((k.height())/soil_width)+2;j++){
 function addNewRoot(root_id_param,initial_root,target_root){
     total_root_num +=1;
     roots[root_id_param] = target_root;
-    root_list[root_id_param] = [];
     root_obj[root_id_param] = k.add([
     k.sprite("root_head"),
     k.pos(initial_root,k.height()*0.4*global_scaleY),
@@ -407,7 +404,7 @@ function addRandomObstruction(){
     ]);    
 };
 
-
+var root_list = [];
 
 k.action("root_head",(root)=>{
     if(!started){
@@ -419,63 +416,46 @@ k.action("root_head",(root)=>{
             k.destroy(root);
         }
     }
-    let dx = (speedY * (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*global_scaleX*1.2)))/k.debug.fps();
-    let dy = speedY/k.debug.fps();
-    let cur_root = k.vec2(root.pos);
-    let last_root = root_list[root.root_id][root_list[root.root_id].length-1];
-
-    if(Math.abs(root.pos.x-roots[root.root_id])>3){
+    if(Math.abs(root.pos.x-roots[root.root_id])>root_width){
+        //root.velocityX = (knob.pos.x-root.pos.x/root.last_move)*0.2;
+        //root.angle += (Math.PI/2)*((speedY*k.debug.fps())/(root.pos.x-roots[root.root_id]));
+        let dx = (speedY * (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)))/k.debug.fps();
+        let dy = speedY/k.debug.fps();
         if(root.pos.x-roots[root.root_id]>0){
             dx = -dx;
-        }
-        for(var d=0;d<Math.ceil(Math.abs(dx));d++){
-            root.pos.x += dx/Math.abs(dx);
-            root_list[root.root_id].push(k.vec2(root.pos.x,root.pos.y+(d/Math.ceil(Math.abs(dx)))*speedY/(k.debug.fps()))); 
-        }
+            root.move(k.vec2(-speedY * (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)),0));
+        }else{
+            root.move(k.vec2(speedY* (Math.abs(root.pos.x-roots[root.root_id])/ (k.width()*0.5)),0));
+        }        
         root.angle = Math.tanh(dx/dy);
         
     }else{
         if(Math.abs(root.angle - 0)>0.2)
-            root.angle += (0 - root.angle)*k.dt();        
-        for(var d=0;d<Math.ceil(Math.abs(dy));d++){
-            root_list[root.root_id].push(k.vec2(root.pos.x,root.pos.y+d)); 
-        }
+            root.angle += (0 - root.angle)*k.dt();
     }    
-    
+    let last_root = root_list[root_list.length-1];
+    let cur_root = k.vec2(root.pos);
     /*
-    let q_t_x;
-    let q_t_y;
     if(root_list.length>1){
-        let lx,ly,t,m_x,m_y;
-        for(var i_y=0;i_y<Math.ceil(cur_root.y-last_root.y);i_y++){
-            if( Math.abs(Math.ceil(cur_root.x-last_root.x)) >0){ 
-                t = i_y/Math.ceil(cur_root.y-last_root.y);
-                m_x = last_root.x + (cur_root.x - last_root.x)/2;
-                m_y = last_root.y + (cur_root.y - last_root.y)/2;
-
-                q_t_x = Math.pow(1-t,2)*cur_root.x + 2*(1-t)*t*m_x + Math.pow(t,2)*last_root.x;
-                q_t_y = Math.pow(1-t,2)*cur_root.y + 2*(1-t)*t*m_y + Math.pow(t,2)*last_root.y;
-                root_list.push(k.vec2(q_t_x,q_t_y));
+        let lx,ly;
+        for(var i_y=0;i_y<Math.ceil(cur_root.y-last_root.y)-1;i_y++){
+            if( Math.abs(Math.ceil(cur_root.x-last_root.x)) >0){
+                lx = (cur_root.x-last_root.x) *
+                    i_y/Math.ceil(cur_root.y-last_root.y);
+                ly = i_y * Math.sin(
+                    (lx / Math.ceil(cur_root.x-last_root.x))
+                    * (Math.PI/2))
+                 ;
+                 ly = i_y;
+                 //ly = 0;
+                root_list.push(k.vec2(cur_root.x - lx
+                    ,cur_root.y-ly));                    
             }else{
-                root_list.push(k.vec2(cur_root.x,cur_root.y-i_y)); 
+                root_list.push(k.vec2(cur_root.x,cur_root.y-i_y));    
             }            
         }
     }*/
-    
-    if(last_root){
-        let m_x;
-        let m_y;
-        if(
-            Math.abs(cur_root.y-last_root.y) >2
-        ){
-            for(var i_t=0;i_t<=1;i_t+=0.1){
-                m_x = (i_t)*cur_root.x + (1-i_t)*last_root.x;
-                m_y = (i_t)*cur_root.y + (1-i_t)*last_root.y;
-                root_list[root.root_id].push(k.vec2(m_x,m_y));
-            }
-        }
-    
-    }
+    root_list.push(cur_root);    
     
     root.prevX = root.pos.x; 
 });
@@ -493,6 +473,7 @@ k.action("obstruction",(o)=>{
     }
 
     k.every("root_head",(r)=>{
+        return;
         if((Math.pow(r.pos.x-o.pos.x,2)/Math.pow(o.width*o.scaleX/2,2) + Math.pow(r.pos.y-o.pos.y,2)/Math.pow(o.height*o.scaleY/2,2))> 1){        
             return;
         }
@@ -620,30 +601,38 @@ function combination(n,r){
     }
 }
 
-k.render(() => {    
-    for(var r_id in root_list){
-        for(var i=0;i<root_list[r_id].length;i++){
-            k.drawSprite("root0", {
-                    pos: k.vec2(root_list[r_id][i].x-2,root_list[r_id][i].y),
-                    scale: [global_scaleX*0.3,global_scaleY*0.3],
-                    center:"origin"
-                });
-            /*
-            k.drawRect(
-                k.vec2(root_list[i].x,root_list[i].y),
-               1,1
-            );*/
-            if(started==true){
-                root_list[r_id][i].y -= speedY/(k.debug.fps());            
-            }
-            if(root_list[r_id][i].y < -root_width){
-                root_list[r_id].splice(i,1);
-            }            
-    }
-    }
-    
-    
+k.render(() => {
+    var q_t_x;
+    var q_t_y;
+    for(var t=0;t<1;t+=0.011){
+        q_t_x = 0;
+        q_t_y = 0;
+        for(var i=0;i<root_list.length;i++){
+            q_t_x += Math.pow(1-t,root_list.length-i)*combination(root_list.length,i)*Math.pow(t,i)*root_list[i].x;
+            q_t_y += Math.pow(1-t,root_list.length-i)*combination(root_list.length,i)*Math.pow(t,i)*root_list[i].y;
+            console.log(q_t_x);
 
+            /*k.drawSprite("root0", {
+                pos: k.vec2(root_list[i].x-2,root_list[i].y),
+                scale: 0.2,
+                center:"origin"
+            });*/
+            if(t==0){
+                if(started==true){
+                    root_list[i].y -= speedY/(k.debug.fps());            
+                }
+                if(root_list[i].y < -root_width){
+                    root_list.splice(i,1);
+                }
+            }
+            k.drawRect(
+                k.vec2(q_t_x,q_t_y),
+               1,1
+            );
+        }
+    }
+    
+    
     if(!started){
         return;
     }
