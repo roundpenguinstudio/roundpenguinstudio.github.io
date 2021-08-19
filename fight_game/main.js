@@ -230,7 +230,7 @@ k.render(()=>{
         audio_cooldown[aud] = Math.max(0,audio_cooldown[aud]-1);
     }
     if(fat["stamina"]<=1){        
-        fat["stamina"] +=0.02;
+        fat["stamina"] +=0.01;
     }
     if(fat["stamina"]>=0.3){
         if(fat["attacking"]==true){
@@ -289,7 +289,7 @@ k.render(()=>{
     }else if(penguin["defending"]==true){
         penguin["speed"] = 3;
         if(penguin["stamina"]>0.05){
-            penguin["stamina"] = Math.max(penguin["stamina"]-0.025,0);
+            //penguin["stamina"] = Math.max(penguin["stamina"]-0.025,0);
             penguin["mode"] = "def-" + penguin["direction"];
         }else{
             penguin["defending"] = false;
@@ -333,7 +333,7 @@ k.render(()=>{
     }else if(fat["defending"]==true){
         fat["speed"] = 3;
         if(fat["stamina"]>0.05){
-            fat["stamina"] = Math.max(fat["stamina"]-0.025,0);
+            //fat["stamina"] = Math.max(fat["stamina"]-0.025,0);
             fat["mode"] = "def-" + fat["direction"];
         }else{
             fat["defending"] = false;
