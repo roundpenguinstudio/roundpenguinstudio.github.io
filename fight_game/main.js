@@ -71,8 +71,8 @@ k.loadSound("sword_down2", "sword_down2.wav");
 k.loadSound("sword_down3", "sword_down3.wav");
 
 var audio_cooldown = {
-    "sword_down1":0,"sword_down2":0,"sword_down3":0,"p_hit1":0,"p_hit2":0,"p_hit3":0,
-    "f_hit1":0,"f_hit2":0,"f_hit3":0,"blocked_d":0,"blocked_m":0,"blocked_u":0,"hit":0
+    "sword_down":0,"p_hit":0,
+    "f_hit":0,"blocked_d":0,"blocked_m":0,"blocked_u":0,"hit":0
 }
 function restart(){
     fat = {"x":250,"mode":"idle-1","stamina":0,"health":1,"direction":"m","attacking":false,"defending":false,"speed":6}
@@ -188,13 +188,13 @@ k.add([
     k.layer("obj"),
     "leaf"]);
 
-function play_audio(aud){
-    if(audio_cooldown[aud]<=0){
+function play_audio(aud,aud_identifier){
+    if(audio_cooldown[aud_identifier]<=0){
         k.play(aud, {
             volume: 1.0,
             speed: 1,
         });
-        audio_cooldown[aud] = 20;
+        audio_cooldown[aud_identifier] = 20;
     }
 }
 function draw_bar(amount,locationX,locationY,color){    
@@ -273,7 +273,7 @@ k.render(()=>{
                     scale: [global_scaleX*0.2,global_scaleY*0.8],
                     frame: 0,
                     });
-                    play_audio("blocked_"+fat["direction"])
+                    play_audio("blocked_"+fat["direction"],"blocked_"+fat["direction"])
             }else{
                 k.drawSprite("f-x", {
                     pos: k.vec2(fat["x"],373),
@@ -281,8 +281,8 @@ k.render(()=>{
                     frame: 0,
                 });
                 fat["health"]  = Math.max(fat["health"]-0.005,0);
-                play_audio("f_hit"+(Math.floor(Math.random()*3)+1).toString())
-                play_audio("hit")
+                play_audio("f_hit"+(Math.floor(Math.random()*3)+1).toString(),"f_hit")
+                play_audio("hit","hit")
             }
             
         }
@@ -318,7 +318,7 @@ k.render(()=>{
                     scale: [global_scaleX*0.2,global_scaleY*0.8],
                     frame: 0,
                 });
-                play_audio("blocked_"+penguin["direction"]);
+                play_audio("blocked_"+penguin["direction"],"blocked_"+penguin["direction"]);
             }else{
                 k.drawSprite("p-x", {
                     pos: k.vec2(penguin["x"],373),
@@ -326,8 +326,8 @@ k.render(()=>{
                     frame: 0,
                 });
                 penguin["health"]  = Math.max(penguin["health"]-0.005,0);
-                play_audio("p_hit"+(Math.floor(Math.random()*3)+1).toString());
-                play_audio("hit");
+                play_audio("p_hit"+(Math.floor(Math.random()*3)+1).toString(),"p_hit");
+                play_audio("hit","hi");
             }
         }
     }else if(fat["defending"]==true){
