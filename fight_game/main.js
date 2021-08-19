@@ -112,6 +112,10 @@ k.keyPress("up", () => {
 });
 k.keyPress(",", () => {    
     if(fat["stamina"]>=1){
+        k.play("sword_down"+(Math.floor(Math.random()*3)+1).toString(), {
+            volume: 1.0,
+            speed: 0.8,
+        });
         fat["stamina"] -= 1;
         fat["attacking"] = true;
         fat["defending"] = false;
@@ -240,7 +244,7 @@ k.render(()=>{
     }
 
     if(penguin["stamina"]<=1){        
-        penguin["stamina"] +=0.02;
+        penguin["stamina"] +=0.01;
     }
     if(penguin["stamina"]>=0.3){
         if(penguin["attacking"]==true){
