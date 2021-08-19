@@ -83,7 +83,7 @@ restart();
 k.scene("main", () => {
 k.keyPress("space", () => {
 });
-k.keyPress("4", () => {
+k.keyPress("left", () => {
     if(fat["mode"]=="idle-1"){
         fat["mode"] = "idle-2";
     }else if(fat["mode"]=="idle-2"){
@@ -95,7 +95,7 @@ k.keyPress("4", () => {
     }
     
 });
-k.keyPress("6", () => {
+k.keyPress("right", () => {
     if(fat["mode"]=="idle-1"){
         fat["mode"] = "idle-2";
     }else if(fat["mode"]=="idle-2"){
@@ -104,13 +104,13 @@ k.keyPress("6", () => {
     fat["x"] += fat["speed"];
 
 });
-k.keyPress("5", () => {
+k.keyPress("down", () => {
     fat["direction"] = "d";
 });
-k.keyPress("8", () => {
+k.keyPress("up", () => {
     fat["direction"] = "u";
 });
-k.keyPress("left", () => {    
+k.keyPress(",", () => {    
     if(fat["stamina"]>=1){
         fat["stamina"] -= 1;
         fat["attacking"] = true;
@@ -118,7 +118,7 @@ k.keyPress("left", () => {
         fat["mode"] = "att-" + fat["direction"];
     }
 });
-k.keyPress("right", () => {    
+k.keyPress(".", () => {    
     if(fat["defending"]==true){
         fat["defending"] = false; 
     }else{
@@ -152,7 +152,7 @@ k.keyPress("s", () => {
 k.keyPress("w", () => {
     penguin["direction"] = "u";
 });
-k.keyPress("k", () => {        
+k.keyPress("2", () => {        
     if(penguin["stamina"]>=1){
         k.play("sword_down"+(Math.floor(Math.random()*3)+1).toString(), {
             volume: 1.0,
@@ -164,7 +164,7 @@ k.keyPress("k", () => {
         penguin["mode"] = "att-" + penguin["direction"];
     }
 });
-k.keyPress("j", () => {    
+k.keyPress("1", () => {    
     if(penguin["defending"]==true){
         penguin["defending"] = false; 
     }else{
