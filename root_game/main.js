@@ -38,7 +38,9 @@ var branch_life = 20;
 var global_scale = 0.5;
 var global_scaleX = 0.5;
 var global_scaleY = 1;
+var root_start_posY = 0.4;
 var pixelScale = 2;
+var dist_moved = 0;
 
 var best_scores = localStorage.getItem('best_scores');
 if(!best_scores){
@@ -60,7 +62,7 @@ k.loadSprite("soil0", "soil1.png");
 k.loadSprite("soil1", "soil2.png");
 
 k.loadSprite("start","start.png");
-k.loadSprite("leaf","leaftop.png");
+k.loadSprite("leaf","background-long.png");
 
 //for(var i=0;i<root_type_num;i++){
 //    k.loadSprite("root"+i.toString(),"root"+i.toString()+".png");
@@ -68,8 +70,8 @@ k.loadSprite("leaf","leaftop.png");
 
 k.loadSprite("root0","rootroot.png");
 
-k.loadSprite("knob","grass.png");
-k.loadSprite("root_head","roothead.PNG");
+k.loadSprite("knob","nr.png");
+k.loadSprite("root_head","shoe-r.png");
 k.loadSprite("rock1","rock1.png");
 k.loadSprite("rock2","rock2.png");
 k.loadSprite("water","water.png");
@@ -149,19 +151,13 @@ k.layers([
 function restart(){
     score = 0;
     roots = {};
+    dist_moved = 0;
     root_list = {};
-    speedY = 200;
     started = true;
     k.every("nav",(nav)=>{
         k.destroy(nav);
     })
-    k.add([
-            k.sprite("leaf"),
-            k.pos(0,0),
-            k.scale([global_scaleX,global_scaleY]),
-            k.layer("bg"),
-            "leaf"
-    ]);    
+    
     k.every("root",(root)=>{
         k.destroy(root);
     });
@@ -174,7 +170,14 @@ function restart(){
     k.every("root_head",(root_head)=>{
         k.destroy(root_head);
     });
-    addNewRoot("root1",k.width()*0.5,k.width()*0.5);
+    k.add([
+            k.sprite("leaf"),
+            k.pos(0,0),
+            k.scale([global_scaleX,global_scaleY]),
+            k.layer("bg"),
+            "leaf"
+]);
+    addNewRoot("root1",k.width()*0.5,k.width()*0.5,false);
     addRandomObstruction();
 }
 k.add([
@@ -183,7 +186,7 @@ k.add([
             k.scale([global_scaleX,global_scaleY]),
             k.layer("bg"),
             "leaf"
-    ]);
+]);
  const start_button =  k.add([
             k.sprite("start"),
             k.pos(k.height()*0.4*global_scaleX,k.height()*0.5*global_scaleY),
@@ -264,17 +267,23 @@ k.add([
 /////////////////////////////////////////////
 for(var i=0;i<=(k.width()/soil_width);i++){
 for(var j=1;j<=((k.height())/soil_width)+2;j++){
-    addRandomSoil(i*soil_width,j*soil_height+k.height()*0.4-soil_height);
+    addRandomSoil(i*soil_width,j*soil_height+k.height()*2-soil_height);
 }
 }
 
-function addNewRoot(root_id_param,initial_root,target_root){
+function addNewRoot(root_id_param,initial_root,target_root,root_started){
     total_root_num +=1;
     roots[root_id_param] = target_root;
     root_list[root_id_param] = [];
+    let root_pos;
+    if(root_started){
+        root_pos = k.pos(initial_root,k.height()*root_start_posY*global_scaleY)
+    }else{
+        root_pos = k.pos(initial_root,k.height()*1.05*global_scaleY)
+    }
     root_obj[root_id_param] = k.add([
     k.sprite("root_head"),
-    k.pos(initial_root,k.height()*0.4*global_scaleY),
+    root_pos,
     k.scale([global_scaleX,global_scaleY]),
     k.layer("obj"),
     k.rotate(0),
@@ -285,6 +294,7 @@ function addNewRoot(root_id_param,initial_root,target_root){
             root_id:root_id_param,
             root_head:true,
             stopped:false,
+            started:root_started,
             prevX:initial_root,
             last_gen:0,
             last_branch:0,
@@ -413,6 +423,13 @@ k.action("root_head",(root)=>{
     if(!started){
         return;
     }
+    if(root.pos.y>k.height()*root_start_posY){
+        root.move(k.vec2(0,-speedY));
+        return;
+    }else{
+        //continue
+    }
+    
     if(root.stopped){
         root.move(k.vec2(0,-speedY));
         if(root.pos.y<-k.height()*0.1){
@@ -466,7 +483,7 @@ k.action("root_head",(root)=>{
         let m_x;
         let m_y;
         if(
-            Math.abs(cur_root.y-last_root.y) >2
+            Math.abs(cur_root.y-last_root.y) >4
         ){
             for(var i_t=0;i_t<=1;i_t+=0.1){
                 m_x = (i_t)*cur_root.x + (1-i_t)*last_root.x;
@@ -493,6 +510,7 @@ k.action("obstruction",(o)=>{
     }
 
     k.every("root_head",(r)=>{
+        return;
         if((Math.pow(r.pos.x-o.pos.x,2)/Math.pow(o.width*o.scaleX/2,2) + Math.pow(r.pos.y-o.pos.y,2)/Math.pow(o.height*o.scaleY/2,2))> 1){        
             return;
         }
@@ -501,9 +519,9 @@ k.action("obstruction",(o)=>{
             k.destroy(o);
             if(total_root_num<4){
             if(r.pos.x+global_scaleX*k.width()*0.2>k.width()){
-                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x-k.width()*0.125*global_scaleX);                
+                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x-k.width()*0.125*global_scaleX,true);                
             }else{
-                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x+k.width()*0.125*global_scaleX);                
+                addNewRoot(Math.random().toString(),r.pos.x,r.pos.x+k.width()*0.125*global_scaleX,true);                
             }
             
             }
@@ -561,7 +579,8 @@ k.action("leaf",(leaf)=>{
         return;
     }
     leaf.move(k.vec2(0,-speedY));
-    if(leaf.pos.y<=-k.height()*0.4){
+    dist_moved += speedY/k.debug.fps();
+    if(leaf.pos.y<=-k.height()*2.2){
         k.destroy(leaf);        
     }    
 });
@@ -570,9 +589,8 @@ k.action("root",(root)=>{
     if(started==false){
         return;
     }
-    if(root.root_head==false){
-        root.move(k.vec2(0,-speedY));
-    }
+    
+    root.move(k.vec2(0,-speedY));
     
     /////////////////////////////////////////////
     if(root.pos.y<=-root_width || root.pos.y>=k.height()+root_width){
@@ -620,27 +638,29 @@ function combination(n,r){
     }
 }
 
-k.render(() => {    
-    for(var r_id in root_list){
-        for(var i=0;i<root_list[r_id].length;i++){
-            k.drawSprite("root0", {
-                    pos: k.vec2(root_list[r_id][i].x-2,root_list[r_id][i].y),
-                    scale: [global_scaleX*0.3,global_scaleY*0.3],
-                    center:"origin"
-                });
-            /*
-            k.drawRect(
-                k.vec2(root_list[i].x,root_list[i].y),
-               1,1
-            );*/
-            if(started==true){
-                root_list[r_id][i].y -= speedY/(k.debug.fps());            
-            }
-            if(root_list[r_id][i].y < -root_width){
-                root_list[r_id].splice(i,1);
-            }            
+k.render(() => {
+        for(var r_id in root_list){
+            for(var i=0;i<root_list[r_id].length;i++){
+                k.drawSprite("root0",
+                    {
+                        pos: k.vec2(root_list[r_id][i].x-2,root_list[r_id][i].y),
+                        scale: [global_scaleX*0.3,global_scaleY*0.3],
+                        center:"origin",
+                    });
+                /*
+                k.drawRect(
+                    k.vec2(root_list[i].x,root_list[i].y),
+                   1,1
+                );*/
+                if(started==true){
+                    root_list[r_id][i].y -= speedY/(k.debug.fps());            
+                }
+                if(root_list[r_id][i].y < -10){
+                    root_list[r_id].splice(i,1);
+                }            
+        }
     }
-    }
+    
     
     
 
