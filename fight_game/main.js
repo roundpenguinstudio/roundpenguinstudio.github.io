@@ -349,11 +349,11 @@ k.render(()=>{
         restart();        
     }else if(fat["health"]==0){
         alert("penguin wins");
-        fat_wins +=1;
+        penguin_wins +=1;
         restart();
     }else if(penguin["health"]==0){
         alert("fat wins");
-        penguin_wins +=1;
+        fat_wins +=1;
         restart();
     }
     k.drawText(        
