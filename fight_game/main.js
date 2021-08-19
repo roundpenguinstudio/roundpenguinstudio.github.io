@@ -270,7 +270,7 @@ k.render(()=>{
         frame: 0,
     });
     if(penguin["attacking"]==true){
-        if(fat["x"] - penguin["x"] < 50){
+        if(fat["x"] - penguin["x"] < 52){
             if(fat["defending"]==true && fat["direction"]==penguin["direction"]){
                     k.drawSprite("spark", {
                     pos: k.vec2(fat["x"]+20,373+direction_offset[fat["direction"]]),
