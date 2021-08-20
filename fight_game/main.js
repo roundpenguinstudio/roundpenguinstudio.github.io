@@ -212,7 +212,7 @@ function play_audio(aud,aud_identifier){
             volume: 1.0,
             speed: 1,
         });
-        audio_cooldown[aud_identifier] = 20;
+        audio_cooldown[aud_identifier] = 40;
     }
 }
 function draw_bar(amount,locationX,locationY,color){    
