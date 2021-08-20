@@ -13,18 +13,20 @@ const k = kaboom({
 function reportWindowSize() {
   if(window.innerHeight < window.innerWidth){
       document.getElementById('game').style.width = window.innerWidth;
-      document.getElementById('game').style.height = window.innerHeight*0.8;
+      document.getElementById('game').style.height = window.innerWidth*0.6;
 }else{
     document.getElementById('game').style.width = window.innerWidth;
-    document.getElementById('game').style.height = window.innerWidth*0.5;
+    document.getElementById('game').style.height = window.innerWidth*0.6;
   }
 }
 reportWindowSize();
 window.onresize = reportWindowSize;
 var global_scaleX = 1;
 var global_scaleY = 1;
-var fat_wins = 0;
+var damage = 0.005;
+var blocking_drain = 0;
 var penguin_wins = 0;
+var fat_wins = 0;
 var direction_offset = {"u":0,"d":150,"m":25};
 var fat;
 var penguin;
@@ -93,7 +95,9 @@ k.keyPress("left", () => {
     if(fat["x"] - penguin["x"]>48){
         fat["x"] -= fat["speed"];
     }
-    
+    if(fat["attacking"]==true){
+        fat["stamina"] = Math.max(0,fat["stamina"]-0.05);
+    }
 });
 k.keyPress("right", () => {
     if(fat["mode"]=="idle-1"){
@@ -102,7 +106,9 @@ k.keyPress("right", () => {
         fat["mode"] = "idle-1";
     }
     fat["x"] += fat["speed"];
-
+    if(fat["attacking"]==true){
+        fat["stamina"] = Math.max(0,fat["stamina"]-0.05);
+    }
 });
 k.keyPress("down", () => {
     fat["direction"] = "d";
@@ -139,6 +145,9 @@ k.keyPress("a", () => {
         penguin["mode"] = "idle-1";
     }
     penguin["x"] -= penguin["speed"];
+    if(penguin["attacking"]==true){
+        penguin["stamina"] = Math.max(0,penguin["stamina"]-0.05);
+    }
 });
 k.keyPress("d", () => {
     if(penguin["mode"]=="idle-1"){
@@ -149,6 +158,9 @@ k.keyPress("d", () => {
     penguin["direction"] = "m";
     if(fat["x"] - penguin["x"]>48){
         penguin["x"] += penguin["speed"];
+    }
+    if(penguin["attacking"]==true){
+        penguin["stamina"] = Math.max(0,penguin["stamina"]-0.05);
     }
 });
 k.keyPress("s", () => {
@@ -272,8 +284,11 @@ k.render(()=>{
         frame: 0,
     });
     if(penguin["attacking"]==true){
+        penguin["speed"] = 10;
         if(fat["x"] - penguin["x"] < 52){
-            if(fat["defending"]==true && penguin["direction"]==penguin["attack_direction"]){
+            if((fat["defending"]==true && penguin["attack_direction"]==fat["direction"])
+            || 
+            (fat["attacking"]==true&& penguin["attack_direction"]==fat["attack_direction"])){
                     k.drawSprite("spark", {
                     pos: k.vec2(fat["x"]+20,373+direction_offset[fat["direction"]]),
                     scale: [global_scaleX*0.2,global_scaleY*0.8],
@@ -286,7 +301,7 @@ k.render(()=>{
                     scale: [global_scaleX*0.2,global_scaleY*0.8],
                     frame: 0,
                 });
-                fat["health"]  = Math.max(fat["health"]-0.005,0);
+                fat["health"]  = Math.max(fat["health"]-damage,0);
                 play_audio("f_hit"+(Math.floor(Math.random()*3)+1).toString(),"f_hit")
                 play_audio("hit","hit")
             }
@@ -295,7 +310,7 @@ k.render(()=>{
     }else if(penguin["defending"]==true){
         penguin["speed"] = 3;
         if(penguin["stamina"]>0.05){
-            //penguin["stamina"] = Math.max(penguin["stamina"]-0.025,0);
+            penguin["stamina"] = Math.max(penguin["stamina"]-blocking_drain,0);
             penguin["mode"] = "def-" + penguin["direction"];
         }else{
             penguin["defending"] = false;
@@ -317,8 +332,11 @@ k.render(()=>{
         frame: 0,
     });
     if(fat["attacking"]==true){
+        fat["speed"] = 10;
         if(fat["x"] - penguin["x"] < 52){
-            if(penguin["defending"]==true && fat["attack_direction"]==penguin["direction"]){
+            if( (penguin["defending"]==true && fat["attack_direction"]==penguin["direction"])
+            || 
+            (penguin["attacking"]==true && fat["attack_direction"]==penguin["attack_direction"])){
                     k.drawSprite("spark", {
                     pos: k.vec2(penguin["x"]+60,373+direction_offset[penguin["direction"]]),
                     scale: [global_scaleX*0.2,global_scaleY*0.8],
@@ -331,7 +349,7 @@ k.render(()=>{
                     scale: [global_scaleX*0.2,global_scaleY*0.8],
                     frame: 0,
                 });
-                penguin["health"]  = Math.max(penguin["health"]-0.005,0);
+                penguin["health"]  = Math.max(penguin["health"]-damage,0);
                 play_audio("p_hit"+(Math.floor(Math.random()*3)+1).toString(),"p_hit");
                 play_audio("hit","hi");
             }
@@ -339,7 +357,7 @@ k.render(()=>{
     }else if(fat["defending"]==true){
         fat["speed"] = 3;
         if(fat["stamina"]>0.05){
-            //fat["stamina"] = Math.max(fat["stamina"]-0.025,0);
+            fat["stamina"] = Math.max(fat["stamina"]-blocking_drain,0);
             fat["mode"] = "def-" + fat["direction"];
         }else{
             fat["defending"] = false;
@@ -373,28 +391,38 @@ k.render(()=>{
         origin: "topleft",
         color:k.rgb(0,0,0)
     });
-    
-    if(fat["direction"]=="m"){
+    let fat_arrow_direction,penguin_arrow_direction;
+    if(fat["attacking"]==true){
+        fat_arrow_direction = fat["attack_direction"];
+    }else{
+        fat_arrow_direction = fat["direction"];
+    }
+    if(penguin["attacking"]==true){
+        penguin_arrow_direction = penguin["attack_direction"];
+    }else{
+        penguin_arrow_direction = penguin["direction"];
+    }
+    if(fat_arrow_direction=="m"){
         k.drawSprite("arrow-l", {
             pos: k.vec2(fat["x"]+55,330),
             scale: [global_scaleX*0.2,global_scaleY*0.8],
             frame: 0,
         });
     }else{
-        k.drawSprite("arrow-"+fat["direction"], {
+        k.drawSprite("arrow-"+fat_arrow_direction, {
             pos: k.vec2(fat["x"]+55,330),
             scale: [global_scaleX*0.2,global_scaleY*0.8],
             frame: 0,
         });
     }
-    if(penguin["direction"]=="m"){
+    if(penguin_arrow_direction=="m"){
         k.drawSprite("arrow-r", {
             pos: k.vec2(penguin["x"]+30,420),
             scale: [global_scaleX*0.2,global_scaleY*0.8],
             frame: 0,
         });
     }else{
-        k.drawSprite("arrow-"+penguin["direction"], {
+        k.drawSprite("arrow-"+penguin_arrow_direction, {
             pos: k.vec2(penguin["x"]+30,420),
             scale: [global_scaleX*0.2,global_scaleY*0.8],
             frame: 0,
